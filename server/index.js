@@ -16,9 +16,14 @@ app.get("/", (req, res) => {
 
 app.post("/", async (req, res) => {
   const { username, score } = req.body;
+  // Parse the credentials JSON from the environment variable
+  const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
   const auth = new google.auth.GoogleAuth({
-    keyFile: "creadentials.json",
+    credentials: {
+        client_email: credentials.client_email,
+        private_key: credentials.private_key.replace(/\\n/g, '\n'),
+    },
     scopes: "https://www.googleapis.com/auth/spreadsheets",
   });
 
