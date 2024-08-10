@@ -3,7 +3,6 @@ const cors = require('cors');
 const { google } = require("googleapis");
 
 const app = express();
-app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({
@@ -11,7 +10,7 @@ app.use(cors({
   }));
 
 app.get("/", (req, res) => {
-  res.render("index");
+  res.status(200).send("Hello, world!");
 });
 
 app.post("/", async (req, res) => {
@@ -48,5 +47,5 @@ app.post("/", async (req, res) => {
 
   res.send("Successfully submitted! Thank you!");
 });
-
-app.listen(1337, (req, res) => console.log("running on 1337"));
+const port =  process.env.PORT || 1337; 
+app.listen(port, (req, res) => console.log("running on 1337"));
