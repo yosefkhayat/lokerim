@@ -198,7 +198,7 @@ const LockerimQuiz = () => {
     } else {
       setShowScore(true);
     // Send POST request with username and score as JSON
-    fetch('http://localhost:1337/', {
+    fetch('https://lokerim.onrender.com/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
