@@ -30,13 +30,28 @@ app.use(cors());
   app.get("/", (req, res) => {
     res.status(200).send("Hello, world!");
   });
-  app.get("/question", async(req, res) => {
+  app.get("/question", async (req, res) => {
     const getRows = await googleSheets.spreadsheets.values.get({
       auth,
       spreadsheetId,
       range: "questions!A:G",
     });
-    res.status(200).send(getRows.data.values);
+    // Extract headers from the first sub-array
+    const headers = data[0];
+
+    // Convert the remaining data into the desired format
+    const result = data.slice(1).map(item => ({
+      question: item[headers.indexOf("question")],
+      options: [
+        item[headers.indexOf("1")],
+        item[headers.indexOf("2")],
+        item[headers.indexOf("3")],
+        item[headers.indexOf("4")]
+      ],
+      correctAnswer: parseInt(item[headers.indexOf("correctAnswer")], 10),
+      image: item[headers.indexOf("image")]
+    }));
+    res.status(200).send(result);
   });
   app.post("/", async (req, res) => {
     const { username, score } = req.body;
