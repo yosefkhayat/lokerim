@@ -7,13 +7,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.status(200).send("Hello, world!");
-});
-
-app.post("/", async (req, res) => {
-  const { username, score } = req.body;
-  // Parse the credentials JSON from the environment variable
+// Parse the credentials JSON from the environment variable
   const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
   const auth = new google.auth.GoogleAuth({
@@ -32,6 +26,14 @@ app.post("/", async (req, res) => {
 
   const spreadsheetId = "19AviszQbiPmqZHoRnPUHI3TJJimtYYLZzpnH_VmQcdI";
 
+
+app.get("/", (req, res) => {
+  res.status(200).send("Hello, world!");
+});
+
+app.post("/", async (req, res) => {
+  const { username, score } = req.body;
+  
   // Write row(s) to spreadsheet
   await googleSheets.spreadsheets.values.append({
     auth,
