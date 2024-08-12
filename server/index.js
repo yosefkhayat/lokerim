@@ -37,10 +37,10 @@ app.use(cors());
       range: "questions!A:G",
     });
     // Extract headers from the first sub-array
-    const headers = getRows[0];
+    const headers = getRows.data.values[0];
 
     // Convert the remaining data into the desired format
-    const result = getRows.slice(1).map(item => ({
+    const result = getRows.data.values.slice(1).map(item => ({
       question: item[headers.indexOf("question")],
       options: [
         item[headers.indexOf("1")],
