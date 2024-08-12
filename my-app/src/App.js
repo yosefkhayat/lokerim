@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
+import { useParams } from 'react-router-dom';
+
+
+
+
 
 // const questions = [
 //   {
@@ -166,12 +171,13 @@ const LockerimQuiz = () => {
   const [loading, setLoading] = useState(true);
   // State to store any errors
   const [error, setError] = useState(null);
+  const { quizParam } = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Make the API call
-        const questions = await fetch('https://lokerim.onrender.com/question').then(data => {
+        const questions = await fetch(`https://lokerim.onrender.com/${quizParam}`).then(data => {
           if (!data.ok) {
             throw Error(data.status);
           }

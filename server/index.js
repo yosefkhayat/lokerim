@@ -26,33 +26,55 @@ app.use(cors());
 
   const spreadsheetId = "19AviszQbiPmqZHoRnPUHI3TJJimtYYLZzpnH_VmQcdI";
 
+  const checkRangeExists = async (sheetName) => {
+    try {
+      const response = await googleSheets.spreadsheets.get({
+        auth,
+        spreadsheetId,
+        ranges: [sheetName],
+        fields: 'sheets.properties'
+      });
+
+      return response.data.sheets.length > 0;
+    } catch (error) {
+      return false;
+    }
+  };
 
   app.get("/", (req, res) => {
     res.status(200).send("Hello, world!");
   });
-  app.get("/question", async (req, res) => {
-    const getRows = await googleSheets.spreadsheets.values.get({
-      auth,
-      spreadsheetId,
-      range: "questions!A:G",
-    });
-    // Extract headers from the first sub-array
-    const headers = getRows.data.values[0];
+  app.get("/:question", async (req, res) => {
+    const sheetName = req.params['question'];
 
-    // Convert the remaining data into the desired format
-    const result = getRows.data.values.slice(1).map(item => ({
-      question: item[headers.indexOf("question")],
-      options: [
-        item[headers.indexOf("1")],
-        item[headers.indexOf("2")],
-        item[headers.indexOf("3")],
-        item[headers.indexOf("4")]
-      ],
-      correctAnswer: parseInt(item[headers.indexOf("correctAnswer")], 10),
-      image: item[headers.indexOf("image")]
-    }));
-    res.status(200).send(result);
-  });
+    const rangeExists = await checkRangeExists(sheetName);
+    if (rangeExists) {
+
+      const getRows = await googleSheets.spreadsheets.values.get({
+        auth,
+        spreadsheetId,
+        range: `${sheetName}!A:G`,
+      });
+      // Extract headers from the first sub-array
+      const headers = getRows.data.values[0];
+
+      // Convert the remaining data into the desired format
+      const result = getRows.data.values.slice(1).map(item => ({
+        question: item[headers.indexOf("question")],
+        options: [
+          item[headers.indexOf("1")],
+          item[headers.indexOf("2")],
+          item[headers.indexOf("3")],
+          item[headers.indexOf("4")]
+        ],
+        correctAnswer: parseInt(item[headers.indexOf("correctAnswer")], 10),
+        image: item[headers.indexOf("image")]
+      }));
+      res.status(200).send(result);
+
+    } else {
+      res.status(404).send('No questions found');
+    }});
   app.post("/", async (req, res) => {
     const { username, score } = req.body;
 
