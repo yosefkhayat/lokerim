@@ -186,7 +186,6 @@ const LockerimQuiz = () => {
         })
          // Check if the response is ok
         const { welcome, questions } = response;
-        console.log(welcome+" "+questions); // Log the welcome message
         // Check if the response is ok
         setQuestions(questions);
         setWelcome(welcome);
@@ -251,7 +250,7 @@ const LockerimQuiz = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, score: wasCorrect ? score + 1 : score }),
+        body: JSON.stringify({ username, score: wasCorrect ? score + 1 : score, quizName:quizParam }),
       });
     }
   };

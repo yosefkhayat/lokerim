@@ -9,7 +9,7 @@ app.use(cors());
 (async () => {
   // Parse the credentials JSON from the environment variable
   const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
-  
+
   const auth = new google.auth.GoogleAuth({
     credentials: {
       client_email: credentials.client_email,
@@ -80,7 +80,7 @@ app.use(cors());
       res.status(404).send('No questions found');
     }});
   app.post("/", async (req, res) => {
-    const { username, score } = req.body;
+    const { username, score, quizName } = req.body;
 
     // Write row(s) to spreadsheet
     await googleSheets.spreadsheets.values.append({
@@ -89,7 +89,7 @@ app.use(cors());
       range: "info!A:B",
       valueInputOption: "USER_ENTERED",
       resource: {
-        values: [[username, score]],
+        values: [[username, score, quizName]],
       },
     });
 
