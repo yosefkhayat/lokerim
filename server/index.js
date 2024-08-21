@@ -9,7 +9,7 @@ app.use(cors());
 (async () => {
   // Parse the credentials JSON from the environment variable
   const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
-
+  
   const auth = new google.auth.GoogleAuth({
     credentials: {
       client_email: credentials.client_email,
@@ -55,11 +55,15 @@ app.use(cors());
         spreadsheetId,
         range: `${sheetName}!A:G`,
       });
+      const welcome = getRows.data.values[0];
       // Extract headers from the first sub-array
-      const headers = getRows.data.values[0];
+      const headers = getRows.data.values[1];
 
+
+      let result ={};
+      result.welcome = welcome;
       // Convert the remaining data into the desired format
-      const result = getRows.data.values.slice(1).map(item => ({
+      result.questions = getRows.data.values.slice(2).map(item => ({
         question: item[headers.indexOf("question")],
         options: [
           item[headers.indexOf("1")],

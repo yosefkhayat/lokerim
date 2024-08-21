@@ -172,23 +172,24 @@ const LockerimQuiz = () => {
   // State to store any errors
   const [error, setError] = useState(null);
   const { quizParam } = useParams();
+  const [welcome, setWelcome] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Make the API call
-        const questions = await fetch(`https://lokerim.onrender.com/${quizParam}`).then(data => {
+        const response = await fetch(`https://lokerim.onrender.com/${quizParam}`).then(data => {
           if (!data.ok) {
             throw Error(data.status);
           }
           return data.json();
         })
-          .then(question => {
-            return question;
-          });
-        console.log(questions);
+         // Check if the response is ok
+        const { welcome, questions } = response;
+        console.log(welcome+" "+questions); // Log the welcome message
         // Check if the response is ok
         setQuestions(questions);
+        setWelcome(welcome);
         // Parse the JSON data
 
         // Update state with the fetched data
@@ -266,7 +267,7 @@ const LockerimQuiz = () => {
   if (!quizStarted) {
     return (
       <div className="quiz-container">
-        <h1>ברוכים הבאים לחידון המנעול החכם של Lockerim!</h1>
+        <h1>{welcome}</h1>
         <input
           type="text"
           placeholder="הכנס את שמך"
@@ -299,6 +300,11 @@ const LockerimQuiz = () => {
             <div className="question-text">
               {questions[currentQuestion].question}
             </div>
+            {questions[currentQuestion].image ? (
+              <div>
+                <img src={questions[currentQuestion].image}  width="240" height="180"  alt="Question" />
+              </div>):<></>
+            }
           </div>
           {showFeedback ? (
             <div className={`feedback ${isCorrect ? "correct" : "incorrect"}`}>
